@@ -42,8 +42,8 @@
     --ui_LANG: CN;
     --ui_title_CN: 蓝墨水阅读器;
     --ui_title_EN: SimpleTextReader;
-    --ui_dropZoneText_CN: txt;
-    --ui_dropZoneText_EN: txt;
+    --ui_dropZoneText_CN: 双击txt;
+    --ui_dropZoneText_EN: 双击txt;
     --ui_readingProgress_CN: 阅读进度：;
     --ui_readingProgress_EN: Progress：;   /* Have to use chinese colon and replace it later */
     --ui_contentWidth: 72;
