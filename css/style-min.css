@@ -1589,11 +1589,12 @@ small {
 }
 .shlogo {
 	position: relative;
-	width: 450px;
+	width: 100px;
 	height: 100px;
 	margin: 45px auto;
 	top: 25px;
-	background: url(../images/logo.svg) no-repeat center/cover;
+	background: url(../images/logo2.svg) no-repeat center/cover;
+	
 }
 .box-main h1, .box-main h2, .box-main h3 {
     margin: 1em 0
