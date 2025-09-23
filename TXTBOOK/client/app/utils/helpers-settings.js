@@ -313,7 +313,7 @@ function isFontAvailable(font) {
  */
 const measureText = (() => {
     const testString =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789零一二三四五六七八九十百千万亿易笺藏书";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789零一二三四五六七八九十百千万亿蓝墨水藏书";
     const testSize = "72px";
 
     // Cache the canvas for reuse
