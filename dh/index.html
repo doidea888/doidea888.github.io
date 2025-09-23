@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>导航网站 - 管理后台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+tailwind.config={
+theme:{
+extend:{
+colors:{
+primary:'#3b82f6',
+secondary:'#64748b'
+},
+borderRadius:{
+'none':'0px',
+'sm':'4px',
+DEFAULT:'8px',
+'md':'12px',
+'lg':'16px',
+'xl':'20px',
+'2xl':'24px',
+'3xl':'32px',
+'full':'9999px',
+'button':'8px'
+}
+}
+}
+}
+</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+.search-input:focus {
+outline: none;
+}
+@keyframes fadeInOut {
+0% { opacity: 0; transform: translateY(-10px); }
+10% { opacity: 1; transform: translateY(0); }
+90% { opacity: 1; transform: translateY(0); }
+100% { opacity: 0; transform: translateY(-10px); }
+}
+.animate-fade-in-out {
+animation: fadeInOut 2s ease-in-out forwards;
+}
+.card {
+transition: all 0.3s ease;
+}
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.1);
+border-color: rgba(99, 102, 241, 0.2);
+}
+.nav-link {
+transition: all 0.3s ease;
+}
+.nav-link:hover {
+background-color: #f5f5f5;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+</style>
+</head>
+<body class="bg-[#fafafa] min-h-screen">
+<div id="adminPanel" class="fixed top-0 left-0 w-full h-full bg-black/50 hidden z-50 flex items-center justify-center">
+<div class="bg-white rounded-xl w-[800px] max-h-[90vh] overflow-y-auto">
+<div class="p-6 border-b border-gray-100">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold">网站管理</h2>
+<button onclick="closeAdminPanel()" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full !rounded-button">
+<i class="ri-close-line"></i>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="mb-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">添加新网站</h3>
+</div>
+<form id="addSiteForm" class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">网站名称</label>
+<input type="text" name="siteName" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:ring-opacity-50 focus:border-primary" required>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">网站链接</label>
+<input type="url" name="siteUrl" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:ring-opacity-50 focus:border-primary" required>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">网站描述</label>
+<input type="text" name="siteDesc" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:ring-opacity-50 focus:border-primary" required>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">选择分类</label>
+<select name="category" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:ring-opacity-50 focus:border-primary pr-8" required>
+<option value="hot">热门推荐</option>
+<option value="design">设计资源</option>
+<option value="frontend">前端开发</option>
+<option value="image">图片素材</option>
+<option value="tools">工具资源</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">图标样式</label>
+<input type="text" name="icon" placeholder="输入 Remix Icon 名称" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:ring-opacity-50 focus:border-primary" required>
+</div>
+</div>
+<div class="flex justify-end space-x-3">
+<button type="button" onclick="closeAdminPanel()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg !rounded-button">取消</button>
+<button type="submit" class="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg !rounded-button">添加网站</button>
+</div>
+</form>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">网站管理</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center space-x-3 mb-3">
+<button onclick="filterSites('all')" class="px-3 py-1.5 bg-primary text-white rounded-full text-sm !rounded-button">全部</button>
+<button onclick="filterSites('hot')" class="px-3 py-1.5 hover:bg-gray-100 rounded-full text-sm !rounded-button">热门推荐</button>
+<button onclick="filterSites('design')" class="px-3 py-1.5 hover:bg-gray-100 rounded-full text-sm !rounded-button">设计资源</button>
+<button onclick="filterSites('frontend')" class="px-3 py-1.5 hover:bg-gray-100 rounded-full text-sm !rounded-button">前端开发</button>
+<button onclick="filterSites('image')" class="px-3 py-1.5 hover:bg-gray-100 rounded-full text-sm !rounded-button">图片素材</button>
+<button onclick="filterSites('tools')" class="px-3 py-1.5 hover:bg-gray-100 rounded-full text-sm !rounded-button">工具资源</button>
+</div>
+<div class="bg-gray-50 rounded-xl p-4">
+<div class="grid grid-cols-3 gap-4" id="sitesList">
+<!-- 网站列表将通过 JavaScript 动态生成 -->
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 顶部导航 -->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+<div class="container mx-auto px-6 py-4 flex items-center justify-between">
+<a href="#" class="text-2xl font-['Pacifico'] text-primary">logo</a>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<div class="flex items-center bg-gray-50 rounded-xl px-4 py-2.5 w-72 border border-gray-100">
+<div class="w-5 h-5 flex items-center justify-center text-gray-500">
+<i class="ri-search-line"></i>
+</div>
+<input type="text" class="search-input bg-transparent border-none ml-2 w-full text-sm" placeholder="搜索网站或资源...">
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<button onclick="openAdminPanel()" class="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 !rounded-button">
+<i class="ri-settings-line"></i>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- 分类导航 -->
+<div class="flex">
+<nav class="w-64 bg-white border-r border-gray-100 min-h-screen fixed left-0 top-16 overflow-y-auto">
+<div class="py-6 px-3">
+<a href="#" class="flex items-center space-x-3 px-4 py-3 text-primary bg-indigo-50 rounded-xl mb-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-home-line"></i>
+</div>
+<span>首页</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-palette-line"></i>
+</div>
+<span>设计资源</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-code-line"></i>
+</div>
+<span>前端开发</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-image-line"></i>
+</div>
+<span>图片素材</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-tools-line"></i>
+</div>
+<span>工具资源</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-book-line"></i>
+</div>
+<span>学习教程</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-lightbulb-line"></i>
+</div>
+<span>灵感创意</span>
+</a>
+<a href="#" class="flex items-center space-x-3 px-4 py-2.5 text-gray-600 hover:bg-gray-50 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-apps-line"></i>
+</div>
+<span>更多分类</span>
+</a>
+</div>
+</nav>
+<main class="ml-64 flex-1 px-8 py-8">
+<!-- 热门推荐 -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 flex items-center justify-center text-red-500">
+<i class="ri-fire-line"></i>
+</div>
+<h2 class="text-lg font-bold">热门推荐</h2>
+</div>
+<a href="#" class="text-sm text-gray-500 hover:text-primary flex items-center">
+更多
+<div class="w-4 h-4 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-behance-fill text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Behance</h3>
+<p class="text-xs text-gray-500 text-center mt-1">全球顶尖创意作品展示平台</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full mb-3">
+<i class="ri-dribbble-fill text-purple-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Dribbble</h3>
+<p class="text-xs text-gray-500 text-center mt-1">设计师必备灵感社区</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-red-100 rounded-full mb-3">
+<i class="ri-pinterest-fill text-red-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Pinterest</h3>
+<p class="text-xs text-gray-500 text-center mt-1">图片创意收藏分享社区</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mb-3">
+<i class="ri-pages-line text-green-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">站酷</h3>
+<p class="text-xs text-gray-500 text-center mt-1">中国设计师交流平台</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full mb-3">
+<i class="ri-award-line text-yellow-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Awwwards</h3>
+<p class="text-xs text-gray-500 text-center mt-1">网页设计优秀案例展示</p>
+</a>
+</div>
+</section>
+<!-- 设计资源 -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 flex items-center justify-center text-purple-500">
+<i class="ri-palette-line"></i>
+</div>
+<h2 class="text-lg font-bold">设计资源</h2>
+</div>
+<a href="#" class="text-sm text-gray-500 hover:text-primary flex items-center">
+更多
+<div class="w-4 h-4 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-indigo-100 rounded-full mb-3">
+<i class="ri-file-list-line text-indigo-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">优设网</h3>
+<p class="text-xs text-gray-500 text-center mt-1">设计师交流学习平台</p>
+</a>
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-brush-line text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">花瓣网</h3>
+<p class="text-xs text-gray-500 text-center mt-1">图片素材收集工具</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-full mb-3">
+<i class="ri-palette-fill text-pink-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">色彩猎人</h3>
+<p class="text-xs text-gray-500 text-center mt-1">配色方案生成工具</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mb-3">
+<i class="ri-shape-line text-green-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Figma</h3>
+<p class="text-xs text-gray-500 text-center mt-1">专业UI设计协作工具</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full mb-3">
+<i class="ri-layout-line text-orange-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">UI中国</h3>
+<p class="text-xs text-gray-500 text-center mt-1">专业用户体验设计平台</p>
+</a>
+</div>
+</section>
+<!-- 前端开发 -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 flex items-center justify-center text-blue-500">
+<i class="ri-code-line"></i>
+</div>
+<h2 class="text-lg font-bold">前端开发</h2>
+</div>
+<a href="#" class="text-sm text-gray-500 hover:text-primary flex items-center">
+更多
+<div class="w-4 h-4 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-github-fill text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">GitHub</h3>
+<p class="text-xs text-gray-500 text-center mt-1">全球最大的代码托管平台</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mb-3">
+<i class="ri-vuejs-line text-green-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Vue.js</h3>
+<p class="text-xs text-gray-500 text-center mt-1">渐进式JavaScript框架</p>
+</a>
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-reactjs-line text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">React</h3>
+<p class="text-xs text-gray-500 text-center mt-1">用于构建用户界面的库</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full mb-3">
+<i class="ri-bootstrap-line text-purple-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Bootstrap</h3>
+<p class="text-xs text-gray-500 text-center mt-1">流行的CSS框架</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-sky-100 rounded-full mb-3">
+<i class="ri-css3-line text-sky-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">TailwindCSS</h3>
+<p class="text-xs text-gray-500 text-center mt-1">实用优先的CSS框架</p>
+</a>
+</div>
+</section>
+<!-- 图片素材 -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 flex items-center justify-center text-green-500">
+<i class="ri-image-line"></i>
+</div>
+<h2 class="text-lg font-bold">图片素材</h2>
+</div>
+<a href="#" class="text-sm text-gray-500 hover:text-primary flex items-center">
+更多
+<div class="w-4 h-4 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-image-2-line text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Unsplash</h3>
+<p class="text-xs text-gray-500 text-center mt-1">免费高质量图片网站</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-yellow-100 rounded-full mb-3">
+<i class="ri-gallery-line text-yellow-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Pexels</h3>
+<p class="text-xs text-gray-500 text-center mt-1">免费摄影图片分享</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mb-3">
+<i class="ri-image-edit-line text-green-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">Pixabay</h3>
+<p class="text-xs text-gray-500 text-center mt-1">免版税图片和视频</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-full mb-3">
+<i class="ri-camera-line text-pink-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">图虫网</h3>
+<p class="text-xs text-gray-500 text-center mt-1">中国摄影师交流平台</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full mb-3">
+<i class="ri-file-gif-line text-purple-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">GIPHY</h3>
+<p class="text-xs text-gray-500 text-center mt-1">GIF动图搜索引擎</p>
+</a>
+</div>
+</section>
+<!-- 工具资源 -->
+<section class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 flex items-center justify-center text-orange-500">
+<i class="ri-tools-line"></i>
+</div>
+<h2 class="text-lg font-bold">工具资源</h2>
+</div>
+<a href="#" class="text-sm text-gray-500 hover:text-primary flex items-center">
+更多
+<div class="w-4 h-4 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-red-100 rounded-full mb-3">
+<i class="ri-compasses-2-line text-red-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">ProcessOn</h3>
+<p class="text-xs text-gray-500 text-center mt-1">在线作图工具</p>
+</a>
+<a href="#" class="card bg-white rounded-xl border border-gray-100 hover:shadow-lg p-5 flex flex-col items-center transition-all duration-300">
+<div class="w-16 h-16 flex items-center justify-center bg-indigo-50 rounded-2xl mb-4">
+<i class="ri-translate-2 text-blue-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">DeepL翻译</h3>
+<p class="text-xs text-gray-500 text-center mt-1">AI驱动的翻译工具</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full mb-3">
+<i class="ri-file-reduce-line text-green-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">TinyPNG</h3>
+<p class="text-xs text-gray-500 text-center mt-1">图片压缩工具</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-indigo-100 rounded-full mb-3">
+<i class="ri-font-size-2 text-indigo-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">字体天下</h3>
+<p class="text-xs text-gray-500 text-center mt-1">中文字体下载网站</p>
+</a>
+<a href="#" class="card bg-white rounded shadow-sm hover:shadow-md p-4 flex flex-col items-center">
+<div class="w-12 h-12 flex items-center justify-center bg-purple-100 rounded-full mb-3">
+<i class="ri-ruler-line text-purple-600 text-xl"></i>
+</div>
+<h3 class="font-medium text-center">创客贴</h3>
+<p class="text-xs text-gray-500 text-center mt-1">在线平面设计工具</p>
+</a>
+</div>
+</section>
+</main>
+</div>
+<footer class="bg-white border-t border-gray-100 py-8 ml-64">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between">
+<div class="mb-4 md:mb-0">
+<p class="text-sm text-gray-600">© 2025 导航网站 版权所有</p>
+</div>
+<div class="flex space-x-4">
+<a href="#" class="text-gray-600 hover:text-primary">
+<div class="w-8 h-8 flex items-center justify-center bg-white rounded-full">
+<i class="ri-weibo-fill"></i>
+</div>
+</a>
+<a href="#" class="text-gray-600 hover:text-primary">
+<div class="w-8 h-8 flex items-center justify-center bg-white rounded-full">
+<i class="ri-wechat-fill"></i>
+</div>
+</a>
+<a href="#" class="text-gray-600 hover:text-primary">
+<div class="w-8 h-8 flex items-center justify-center bg-white rounded-full">
+<i class="ri-github-fill"></i>
+</div>
+</a>
+<a href="#" class="text-gray-600 hover:text-primary">
+<div class="w-8 h-8 flex items-center justify-center bg-white rounded-full">
+<i class="ri-mail-line"></i>
+</div>
+</a>
+</div>
+<div class="mt-4 md:mt-0">
+<ul class="flex space-x-4 text-sm">
+<li><a href="#" class="text-gray-600 hover:text-primary">关于我们</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">联系我们</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">免责声明</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">提交网站</a></li>
+</ul>
+</div>
+</div>
+</div>
+</footer>
+<script>
+function openAdminPanel() {
+const password = prompt('请输入管理密码:');
+if (password === '123456') {
+document.getElementById('adminPanel').classList.remove('hidden');
+document.getElementById('adminPanel').classList.add('flex');
+loadSites();
+} else {
+const notification = document.createElement('div');
+notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-out';
+notification.textContent = '密码错误';
+document.body.appendChild(notification);
+setTimeout(() => {
+notification.remove();
+}, 2000);
+}
+}
+function closeAdminPanel() {
+document.getElementById('adminPanel').classList.add('hidden');
+document.getElementById('adminPanel').classList.remove('flex');
+}
+function filterSites(category) {
+const buttons = document.querySelectorAll('.space-y-4 button');
+buttons.forEach(button => {
+if (button.innerText.toLowerCase().includes(category) || (category === 'all' && button.innerText === '全部')) {
+button.classList.add('bg-primary', 'text-white');
+button.classList.remove('hover:bg-gray-100');
+} else {
+button.classList.remove('bg-primary', 'text-white');
+button.classList.add('hover:bg-gray-100');
+}
+});
+loadSites(category);
+}
+function loadSites(category = 'all') {
+const sitesList = document.getElementById('sitesList');
+sitesList.innerHTML = '';
+// 这里可以从本地存储或后端API获取网站数据
+// 示例数据
+const sites = [
+{id: 1, name: 'Behance', url: 'https://behance.net', desc: '全球顶尖创意作品展示平台', category: 'hot', icon: 'behance-fill'},
+{id: 2, name: 'Dribbble', url: 'https://dribbble.com', desc: '设计师必备灵感社区', category: 'design', icon: 'dribbble-fill'},
+{id: 3, name: 'GitHub', url: 'https://github.com', desc: '全球最大的代码托管平台', category: 'frontend', icon: 'github-fill'},
+];
+const filteredSites = category === 'all' ? sites : sites.filter(site => site.category === category);
+filteredSites.forEach(site => {
+const siteCard = document.createElement('div');
+siteCard.className = 'bg-white rounded-lg p-4 flex items-start space-x-3';
+siteCard.innerHTML = `
+<div class="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-primary/10 rounded-lg">
+<i class="ri-${site.icon} text-primary"></i>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-medium truncate">${site.name}</h4>
+<p class="text-sm text-gray-500 truncate">${site.desc}</p>
+</div>
+<button onclick="deleteSite(${site.id})" class="w-8 h-8 flex-shrink-0 flex items-center justify-center hover:bg-gray-100 rounded-full !rounded-button">
+<i class="ri-delete-bin-line text-red-500"></i>
+</button>
+`;
+sitesList.appendChild(siteCard);
+});
+}
+function deleteSite(id) {
+// 这里添加删除网站的逻辑
+if(confirm('确定要删除这个网站吗？')) {
+console.log('删除网站:', id);
+// 删除后重新加载列表
+loadSites();
+}
+}
+document.addEventListener('DOMContentLoaded', function() {
+// 添加网站表单提交处理
+document.getElementById('addSiteForm').addEventListener('submit', function(e) {
+e.preventDefault();
+const formData = new FormData(this);
+console.log('添加新网站:', Object.fromEntries(formData));
+this.reset();
+// 添加成功后重新加载列表
+loadSites();
+});
+// 卡片悬浮效果
+const cards = document.querySelectorAll('.card');
+cards.forEach(card => {
+card.addEventListener('mouseenter', function() {
+this.classList.add('shadow-md');
+});
+card.addEventListener('mouseleave', function() {
+this.classList.remove('shadow-md');
+});
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+// 搜索框焦点效果
+const searchInput = document.querySelector('.search-input');
+const searchContainer = searchInput.parentElement;
+searchInput.addEventListener('focus', function() {
+searchContainer.classList.add('ring-2', 'ring-primary', 'ring-opacity-50');
+});
+searchInput.addEventListener('blur', function() {
+searchContainer.classList.remove('ring-2', 'ring-primary', 'ring-opacity-50');
+});
+});
+</script>
+</body>
+</html>
