@@ -61,10 +61,10 @@
     --ui_loading_text_zh: "Loading...";
     --ui_loading_text_en: "Loading...";
     --ui_title: "";
-    --ui_title_zh: 易笺;
+    --ui_title_zh: 蓝墨水;
     --ui_title_en: SimpleTextReader;
     --ui_description: "";
-    --ui_description_zh: 易笺是一款简单纯粹的 TXT 阅读器，让朴素的纯文本书籍拥有精致优雅的阅读体验。;
+    --ui_description_zh: 蓝墨水是一款简单纯粹的 TXT 阅读器，让朴素的纯文本书籍拥有精致优雅的阅读体验。;
     --ui_description_en: SimpleTextReader enhances plain TXT reading with a refined, elegant experience.;
     --ui_tooltip_dropZone: "";
     --ui_tooltip_dropZone_zh: 拖拽或双击此处选择 txt 书籍;
@@ -135,9 +135,9 @@
     --ui_setting_tab_reader_en: "Reader UI";
     --ui_setting_tab_shortcuts_zh: "快捷按键";
     --ui_setting_tab_shortcuts_en: "Shortcuts";
-    --ui_setting_tab_about_zh: "关于易笺";
+    --ui_setting_tab_about_zh: "关于蓝墨水";
     --ui_setting_tab_about_en: "About";
-    --ui_setting_tab_about_title_zh: "易笺";
+    --ui_setting_tab_about_title_zh: "蓝墨水";
     --ui_setting_tab_about_title_en: "SimpleTextReader";
     --ui_setting_tab_about_version_zh: "版本";
     --ui_setting_tab_about_version_en: "Version";
@@ -252,7 +252,7 @@
     --ui_font_group_system_zh: ※ 本地字体;
     --ui_font_group_system_en: ※ Local Fonts;
     --ui_font_group_app: "";
-    --ui_font_group_app_zh: ※ 易笺字体;
+    --ui_font_group_app_zh: ※ 蓝墨水字体;
     --ui_font_group_app_en: ※ App Fonts;
     --ui_font_group_custom: "";
     --ui_font_group_custom_zh: ※ 自定义字体;
