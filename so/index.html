@@ -12,15 +12,36 @@
   <link rel="ico" href="images/favicon.ico" />
      <link rel="stylesheet" href="css/Fontcss.css" />
  </head> 
-   <style type="text/css">
-  body {
-	background-image: url(images/qicdxsss.jpg);
-	background-size: cover; /* 使背景图片覆盖整个容器，可能会被裁剪 */  
-    background-position: center; /* 将背景图片居中显示 */  
-    background-repeat: no-repeat; /* 防止背景图片重复 */  
-    margin: 0; /* 移除默认的body外边距，确保背景图片覆盖整个视口 */  
-    padding: 0; /* 移除默认的body内边距，同上 */  
-}
+<style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      animation: changeBackground 80s infinite; /* 80秒切换一次背景，无限循环 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    @keyframes changeBackground {
+      0% {
+        background-image: url(images/qicdxsss01.jpg); /* 第一张背景图片 */
+      }
+      20% {
+        background-image: url(images/qicdxsss02.jpg); /* 第二张背景图片 */
+      }
+      40% {
+        background-image: url(images/qicdxsss03.jpg); /* 第三张背景图片 */
+      }
+      60% {
+        background-image: url(images/qicdxsss04.jpg); /* 第四张背景图片 */
+      }
+	  80% {
+        background-image: url(images/qicdxsss05.jpg); /* 第五张背景图片 */
+		}
+      100% {
+        background-image: url(images/qicdxsss01.jpg); /* 回到第一张背景图片 */
+      }
+    }
   </style>
  
  <body class="mobile "> 
@@ -225,9 +246,9 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
         <div class="slogan"> 
          <ul> 
           
-          <li><span></span> 聚合搜索，聚搜天下！ <span></span></li> 
+          <li><span></span>  <a href="https://doidea888.github.io/TXTBOOK">TXT阅读器 </a><span></span></li> 
 
-                  
+                   <li><span></span> 聚合搜索，聚搜天下！ <span></span></li> 
                   
                 <li><span></span> ©CopyRight 2024 Blueink All Rights Reserved. <span></span></li>  </ul> 
                   
