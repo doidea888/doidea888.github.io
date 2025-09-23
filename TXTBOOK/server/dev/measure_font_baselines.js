@@ -35,7 +35,7 @@ import { createCanvas, loadImage } from "canvas";
 
 const DEBUG = false; // Set true for screenshots and devtools.
 const FONT_SIZE = 100; // px
-const TEXT = "易笺"; // Text sample for measurement.
+const TEXT = "蓝墨水"; // Text sample for measurement.
 const FONT_LOAD_TIMER = 60000; // ms
 const HTML_DIV_WIDTH = 400; // px
 const HTML_DIV_HEIGHT = 400; // px
